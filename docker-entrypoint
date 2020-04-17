@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# On low memory machines multiprocess probably takes too much ram,
+# though this has not been measured. So, an environment variable will serve
+# to allow switching
+if [ "$MULTIPROCESS" = "1" ]; then
+  /usr/bin/php /var/tt-rss/update_daemon2.php
+else
+  /usr/bin/php /var/tt-rss/update.php --daemon
+fi

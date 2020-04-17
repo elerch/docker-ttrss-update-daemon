@@ -1,13 +1,12 @@
-# We'd like a systemd init system that we likely already have on disk.
-# Mariadb is using systemd and is based on debian:jessie so we'll go with that
-FROM debian:jessie
+# We'll use the same image that we use for php-fpm. That is not a minimal
+# image, but realistically you'll generally have the two images on the same
+# machine
+FROM docker.lerch.org/php-fpm-ttrss:1
 
-RUN apt-get update && \
-    apt-get install -qq php5-mysql php5-cli curl && \
-    adduser --disabled-password --gecos "" ttrss && \
-    mkdir /var/ttrss
+COPY docker-entrypoint /
+# ttrss pretends php can be somewhere else, but really it must be at
+# /usr/bin/php
+RUN ln -s /usr/local/bin/php /usr/bin/php
 
-WORKDIR /var/ttrss
-USER ttrss
-# container expects things at /var/tt-rss
-CMD ["/usr/bin/php", "/var/ttrss/update_daemon2.php"]
+ENTRYPOINT ["/docker-entrypoint"]
+USER www-data
